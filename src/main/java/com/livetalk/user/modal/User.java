@@ -1,6 +1,7 @@
 package com.livetalk.user.modal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -12,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -52,6 +54,12 @@ public class User {
         inverseJoinColumns = @JoinColumn(
           name = "role_id", referencedColumnName = "id")) 
 	private List<Role> roles;
+	
+	@OneToMany(mappedBy="creator")
+    private Set<UserMessage> creators;
+	
+	@OneToMany(mappedBy="recipient")
+    private Set<UserMessage> recipients;
 	
 	
 	public User(){
@@ -125,6 +133,22 @@ public class User {
 
 	public void setAbout(String about) {
 		this.about = about;
+	}
+
+	public Set<UserMessage> getCreators() {
+		return creators;
+	}
+
+	public void setCreators(Set<UserMessage> creators) {
+		this.creators = creators;
+	}
+
+	public Set<UserMessage> getRecipients() {
+		return recipients;
+	}
+
+	public void setRecipients(Set<UserMessage> recipients) {
+		this.recipients = recipients;
 	}
 
 }

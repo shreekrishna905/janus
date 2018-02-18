@@ -1,34 +1,28 @@
 package com.livetalk.config.websocket;
-
-import javax.jms.ConnectionFactory;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.pool.PooledConnectionFactory;
-import org.apache.camel.builder.RouteBuilder;
-import org.springframework.context.annotation.Bean;
+import org.apache.camel.CamelContext;
+import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.spring.javaconfig.CamelConfiguration;
+import org.apache.camel.spring.javaconfig.Main;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class CamelConfig {
+public class CamelConfig extends CamelConfiguration {
 
-    @Bean
-    ConnectionFactory jmsConnectionFactory() {
-        // use a pool for ActiveMQ connections
-        PooledConnectionFactory pool = new PooledConnectionFactory();
-        pool.setConnectionFactory(new ActiveMQConnectionFactory("tcp://localhost:61616"));
-        return pool;
-    }
-
-    @Bean
-    RouteBuilder myRouter() {
-        return new RouteBuilder() {
-
-            @Override
-            public void configure() throws Exception {
-                // listen the queue named rt_messages and upon receiving a new entry
-                // simply redirect it to a bean named queueHandler which will then send it to users over STOMP
-                from("activemq:rt_messages").to("bean:queueHandler");
-            }
-        };
-    }
+	 public static void main(String[] args) throws Exception {
+	        Main main = new Main();
+	        main.setConfigClass(CamelConfig.class);
+	        main.run();
+	} 
+	 @Override
+     protected void setupCamelContext(CamelContext camelContext) throws Exception {
+        // setup the ActiveMQ component
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
+        connectionFactory.setBrokerURL("tcp://localhost:8161");
+        // and register it into the CamelContext
+        JmsComponent answer = new JmsComponent();
+        answer.setConnectionFactory(connectionFactory);
+        camelContext.addComponent("jms", answer);
+     }
+	 
 }
