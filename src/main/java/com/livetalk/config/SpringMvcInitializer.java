@@ -1,10 +1,13 @@
 package com.livetalk.config;
 
+import javax.servlet.Filter;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+
+import com.livetalk.config.oauth.CorsFilter;
 
 public class SpringMvcInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
@@ -16,6 +19,11 @@ public class SpringMvcInitializer extends AbstractAnnotationConfigDispatcherServ
 	@Override
 	protected Class<?>[] getServletConfigClasses() {
 		return null;
+	}
+	
+	@Override
+	protected Filter[] getServletFilters() {
+		return new Filter[] { new CorsFilter() };
 	}
  
 	@Override
@@ -33,5 +41,5 @@ public class SpringMvcInitializer extends AbstractAnnotationConfigDispatcherServ
 		servletContext.addListener(new HttpSessionEventPublisher());
 		
 	}
-
+	
 }

@@ -23,6 +23,6 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // use the /messaging endpoint (prefixed with /app as configured above) for incoming requests
-        registry.addEndpoint("/messaging").withSockJS();
+        registry.addEndpoint("/messaging").setAllowedOrigins("http://localhost:8080").withSockJS();
     }
 }
