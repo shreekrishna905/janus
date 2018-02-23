@@ -17,6 +17,8 @@ import com.livetalk.user.modal.User;
 @Transactional
 public class UserDAOImpl implements UserDAO {
 
+
+	
 	@PersistenceContext
 	EntityManager entityManager;
 	
@@ -70,5 +72,6 @@ public class UserDAOImpl implements UserDAO {
 		} 
 		return (Role) results.get(0);
 	}
+	
 
 }
