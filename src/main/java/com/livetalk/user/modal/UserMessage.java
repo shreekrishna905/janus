@@ -38,16 +38,7 @@ public class UserMessage {
 	
 	@OneToMany(mappedBy="parent")
     private Set<UserMessage> replies;
-	
-	@ManyToOne
-	@JoinColumn(name="group_id")
-    private UserMessage owner;
     
-	
-	@OneToMany(mappedBy="owner")
-    private Set<UserMessage> group;
-
-		
 	@ManyToOne
 	@JoinColumn(name="recipient_id")
 	private User recipient;
@@ -111,27 +102,6 @@ public class UserMessage {
 	public void setReplies(Set<UserMessage> replies) {
 		this.replies = replies;
 	}
-
-
-	public UserMessage getOwner() {
-		return owner;
-	}
-
-
-	public void setOwner(UserMessage owner) {
-		this.owner = owner;
-	}
-
-
-	public Set<UserMessage> getGroup() {
-		return group;
-	}
-
-
-	public void setGroup(Set<UserMessage> group) {
-		this.group = group;
-	}
-
 
 	public User getRecipient() {
 		return recipient;
