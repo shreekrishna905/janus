@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.livetalk.user.modal.Role;
 import com.livetalk.user.modal.User;
+import com.livetalk.user.modal.UserMessage;
 
 @Service("userDAO")
 @Repository
@@ -71,6 +72,26 @@ public class UserDAOImpl implements UserDAO {
 		return null; 
 		} 
 		return (Role) results.get(0);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly=true)
+	public List<UserMessage> findAllMessage(String creator, String recipient) {
+		List<UserMessage> messages = entityManager
+                .createQuery("SELECT u.message, u.createDate, u.id, u.creator.email,u.recipient.email FROM UserMessage u where u.creator.email=:creator and u.recipient.email=:recipient ORDER BY u.createDate DESC")
+                .setParameter("creator", creator)
+                .setParameter("recipient", recipient)
+                .setFirstResult(0).setMaxResults(5)
+				.getResultList();
+        return messages;
+	}
+
+	@Override
+	public UserMessage saveMessage(UserMessage userMessage) {
+		entityManager.persist(userMessage);	
+		return userMessage;
+		
 	}
 	
 

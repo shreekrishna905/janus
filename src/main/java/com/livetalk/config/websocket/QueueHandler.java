@@ -11,8 +11,6 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeTypeUtils;
 
-import com.livetalk.user.modal.MessageDTO;
-
 @Component(value = "queueHandler")
 public class QueueHandler {
 
@@ -29,9 +27,9 @@ public class QueueHandler {
 
     public void handle(Exchange exchange) {
         Message camelMessage = exchange.getIn();
-        MessageDTO message = camelMessage.getBody(MessageDTO.class);
+        com.livetalk.user.utils.Message message = camelMessage.getBody( com.livetalk.user.utils.Message.class);
         // send the message specifically to the destination user by using STOMP's user-directed messaging
-        msgTemplate.convertAndSendToUser(message.to, "/topic/messages", message, defaultHeaders);
+        msgTemplate.convertAndSendToUser(message.getRecipient(), "/topic/messages", message, defaultHeaders);
     }
 	
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.livetalk.exception.response.ApiResponse;
 import com.livetalk.exception.util.ExceptionCode;
@@ -18,7 +19,7 @@ import com.livetalk.exception.util.UserDuplicationException;
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(value = { JsonMappingException.class, JsonParseException.class })
+	@ExceptionHandler(value = { JsonMappingException.class, JsonParseException.class,JsonProcessingException.class })
     protected ResponseEntity<Object> handleJsonMapping(RuntimeException ex, WebRequest request) {
         ApiResponse response = new ApiResponse(HttpStatus.BAD_REQUEST.value(), ExceptionGenLayer.SERIALIZATION.getValue(), ExceptionCode.JSON_MAPPING_EXCEPTION.getValue(), ExceptionSeverityLevel.JSON_PARSE.getValue(), ex.getLocalizedMessage());
         return new ResponseEntity<Object>(response, new HttpHeaders(), HttpStatus.BAD_REQUEST);
