@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.livetalk.user.dao.UserDAO;
 import com.livetalk.user.modal.UserMessage;
 import com.livetalk.user.utils.Message;
@@ -45,9 +47,9 @@ public class MessageController {
     
 	@PreAuthorize("#oauth2.hasScope('read') and hasRole('ROLE_USER')")
     @RequestMapping(value = "/messages", method = RequestMethod.POST)
-    public ResponseEntity<List<UserMessage>> getMessages(@RequestParam("creator") String creator, @RequestParam("recipient") String recipient) {
-    	List<UserMessage> messages = userDAO.findAllMessage(creator, recipient);
-    	return new ResponseEntity<List<UserMessage>>(messages, HttpStatus.OK);
+    public ResponseEntity<String> getMessages(@RequestParam("creator") String creator, @RequestParam("recipient") String recipient) {
+    	String messages = userDAO.findAllMessage(creator, recipient);
+    	return new ResponseEntity<String>(messages, HttpStatus.OK);
     }
     
 	/**
@@ -59,7 +61,7 @@ public class MessageController {
 	@PreAuthorize("#oauth2.hasScope('read') and hasRole('ROLE_USER')")
     @RequestMapping(value = "/send-message", method = RequestMethod.POST)
     public ResponseEntity<Message> sendMessage(@RequestBody Message message, Principal principal) throws Exception {
-    	UserMessage userMessage = new UserMessage(message.getText(), userDAO.findByEmail(principal.getName()), message.getDate(), (message.getParent()!=null) ? message.getParent():new Long(0), userDAO.findByEmail(message.getRecipient()));
+		UserMessage userMessage = new UserMessage(message.getText(), userDAO.findByEmail(principal.getName()), message.getDate(), (message.getParent()!=null) ? message.getParent():new Long(0), userDAO.findByEmail(message.getRecipient()));
 		userMessage = userDAO.saveMessage(userMessage);
 		message.setId(userMessage.getId());
 		message.setCreator(principal.getName());

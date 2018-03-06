@@ -23,6 +23,7 @@ public class CamelConfig extends CamelConfiguration {
         JmsComponent answer = new JmsComponent();
         answer.setConnectionFactory(connectionFactory);
         camelContext.addComponent("jms", answer);
+        camelContext.addRoutes(new Router());
      }
 	 
 }

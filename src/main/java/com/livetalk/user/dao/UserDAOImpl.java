@@ -3,7 +3,9 @@ package com.livetalk.user.dao;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
+import javax.persistence.StoredProcedureQuery;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -74,17 +76,29 @@ public class UserDAOImpl implements UserDAO {
 		return (Role) results.get(0);
 	}
 
-	@Override
+	/*@Override
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly=true)
 	public List<UserMessage> findAllMessage(String creator, String recipient) {
 		List<UserMessage> messages = entityManager
-                .createQuery("SELECT u.message, u.createDate, u.id, u.creator.email,u.recipient.email FROM UserMessage u where u.creator.email=:creator and u.recipient.email=:recipient ORDER BY u.createDate DESC")
+                .createQuery("from UserMessage u where u.creator.email=:creator and u.recipient.email=:recipient ORDER BY u.createDate DESC")
                 .setParameter("creator", creator)
                 .setParameter("recipient", recipient)
                 .setFirstResult(0).setMaxResults(5)
 				.getResultList();
         return messages;
+	}*/
+	
+	@Override
+	public String findAllMessage(String creator, String recipient) {
+		 StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("find_message");
+         storedProcedure.registerStoredProcedureParameter(1, String.class, ParameterMode.IN);
+         storedProcedure.registerStoredProcedureParameter(2, String.class, ParameterMode.IN);
+         storedProcedure.registerStoredProcedureParameter(3, String.class, ParameterMode.OUT);
+         storedProcedure.setParameter(1, creator);
+         storedProcedure.setParameter(2, recipient);
+         storedProcedure.execute();
+        return storedProcedure.getOutputParameterValue(3).toString();
 	}
 
 	@Override

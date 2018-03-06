@@ -13,5 +13,6 @@ public interface UserDAO {
 	public void saveOrUpdate(User user);
 	public UserMessage saveMessage(UserMessage userMessage);
 	public boolean isUserExist(String email);
-	public List<UserMessage> findAllMessage(String creator, String recipient);
+	public String findAllMessage(String creator, String recipient);
+	
 }

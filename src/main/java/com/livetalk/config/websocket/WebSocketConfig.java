@@ -1,8 +1,5 @@
 package com.livetalk.config.websocket;
-
-
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -13,13 +10,17 @@ import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.messaging.support.ChannelInterceptorAdapter;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.messaging.DefaultSimpUserRegistry;
+import org.springframework.web.socket.messaging.SessionConnectedEvent;
 
 import com.livetalk.config.oauth.JwtAuthentication;
 
@@ -28,11 +29,12 @@ import com.livetalk.config.oauth.JwtAuthentication;
 @Order(Ordered.HIGHEST_PRECEDENCE + 99)
 public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
 
+	@Autowired
+	private SimpUserRegistry userRegistry;
+	
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        // use the /topic prefix for outgoing WebSocket communication
-        config.enableSimpleBroker("/topic");
-
+        config.enableSimpleBroker("/topic","/queue");
         // use the /app prefix for others
         config.setApplicationDestinationPrefixes("/app");
     }
@@ -63,12 +65,15 @@ public class WebSocketConfig extends AbstractWebSocketMessageBrokerConfigurer {
                     if(auth==null){
                     	 Authentication user = jwtAuthentication.getAuthentication(token); // access authentication header(s)
                     	 SecurityContextHolder.getContext().setAuthentication(user);
+                    	  ((DefaultSimpUserRegistry) userRegistry).onApplicationEvent(new SessionConnectedEvent(this, (Message<byte[]>) message, auth));
                     	 accessor.setUser(user);
                     } else {
                     	accessor.setUser(auth);
+                    	 ((DefaultSimpUserRegistry) userRegistry).onApplicationEvent(new SessionConnectedEvent(this, (Message<byte[]>) message, auth));
                     }
                 }
-                return message;
+                accessor.setLeaveMutable(true);
+                return MessageBuilder.createMessage(message.getPayload(), accessor.getMessageHeaders());
             }
         });
     }

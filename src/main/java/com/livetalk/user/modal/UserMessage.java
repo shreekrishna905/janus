@@ -32,7 +32,7 @@ public class UserMessage {
 	private User creator;
 	
 	@Column(name="create_date")
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date createDate;
 	
 	@ManyToOne

@@ -1,9 +1,16 @@
 package com.livetalk.user.utils;
+import java.io.Serializable;
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-public class Message {
+@JsonIgnoreProperties(ignoreUnknown=true)
+public class Message implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	
@@ -15,7 +22,6 @@ public class Message {
 	
 	private String text;
 
-	@JsonDeserialize(using=DateDeserializer.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "EE, MMM dd, yyyy, hh:mm a")
 	private Date date;
 	

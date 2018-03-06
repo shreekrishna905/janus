@@ -29,7 +29,7 @@ public class QueueHandler {
         Message camelMessage = exchange.getIn();
         com.livetalk.user.utils.Message message = camelMessage.getBody( com.livetalk.user.utils.Message.class);
         // send the message specifically to the destination user by using STOMP's user-directed messaging
-        msgTemplate.convertAndSendToUser(message.getRecipient(), "/topic/messages", message, defaultHeaders);
+        msgTemplate.convertAndSendToUser(message.getRecipient(), "/queue/messages", message, defaultHeaders);
     }
 	
 }
